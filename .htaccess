@@ -1,0 +1,47 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /nekirot/nekirot-php/
+
+    # If the request is for a real file or directory, serve it directly (NO REDIRECT)
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # Clean URLs for donor
+    RewriteRule ^donor-dashboard$ donor/dashboard.php [L]
+    RewriteRule ^donor-broadcast$ donor/broadcast.php [L]
+    
+    # Clean URLs for recipient
+    RewriteRule ^recipient-dashboard$ recipient/dashboard.php [L]
+    
+    # Clean URLs for rider
+    RewriteRule ^rider-dashboard$ rider/dashboard.php [L]
+    
+    # Clean URLs for listings
+    RewriteRule ^listing/([0-9]+)$ donor/listing.php?id=$1 [L,QSA]
+    
+    # Track page - IMPORTANT: This must come BEFORE the catch-all rule
+    RewriteRule ^track$ track.php [L]
+    RewriteRule ^track/([0-9]+)$ track.php?rescue_id=$1 [L,QSA]
+    
+    # Clean URLs for public pages
+    RewriteRule ^live-map$ map.php [L]
+    RewriteRule ^leaderboard$ leaderboard.php [L]
+    RewriteRule ^login$ login.php [L]
+    RewriteRule ^register$ register.php [L]
+    RewriteRule ^home$ index.php [L]
+    
+    # Catch-all: redirect to home if nothing matches
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ index.php [L]
+</IfModule>
+
+# Security: Prevent viewing of .htaccess
+<Files .htaccess>
+    Order allow,deny
+    Deny from all
+</Files>
+
+# Security: Prevent directory listing
+Options -Indexes
